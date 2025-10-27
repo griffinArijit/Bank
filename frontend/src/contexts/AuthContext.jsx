@@ -16,6 +16,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [token, setToken] = useState(localStorage.getItem('token'))
 
+  // Set axios base URL once
+  if (!axios.defaults.baseURL) {
+    axios.defaults.baseURL = 'http://localhost:5000'
+  }
+
   // Set up axios interceptor for auth token
   useEffect(() => {
     if (token) {
@@ -81,6 +86,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    token,
     login,
     register,
     logout,

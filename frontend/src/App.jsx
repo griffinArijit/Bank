@@ -10,6 +10,11 @@ import Profile from './components/Profile'
 import ProtectedRoute from './components/ProtectedRoute'
 import PlaceholderPage from './components/PlaceholderPage'
 import FloatingButtons from './components/FloatingButtons'
+import ManageAccounts from './components/ManageAccounts'
+import ChangePassword from './components/ChangePassword'
+import SecuritySettings from './components/SecuritySettings'
+import TransferSystem from './components/TransferSystem'
+import TransactionHistory from './components/TransactionHistory'
 
 // Import all page components
 import Accounts from './pages/Accounts'
@@ -54,7 +59,31 @@ function App() {
               } 
             />
             
-            {/* Payment Routes */}
+       {/* Payment Routes */}
+       <Route 
+         path="/payments/transfer" 
+         element={
+           <ProtectedRoute>
+             <TransferSystem />
+           </ProtectedRoute>
+         } 
+       />
+       <Route 
+         path="/payments/beneficiaries" 
+         element={
+           <ProtectedRoute>
+             <TransferSystem />
+           </ProtectedRoute>
+         } 
+       />
+       <Route 
+         path="/payments/history" 
+         element={
+           <ProtectedRoute>
+             <TransactionHistory />
+           </ProtectedRoute>
+         } 
+       />
             <Route 
               path="/payments/*" 
               element={
@@ -126,10 +155,34 @@ function App() {
             
             {/* Profile Routes */}
             <Route 
-              path="/profile/*" 
+              path="/profile/update" 
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile/manage-accounts" 
+              element={
+                <ProtectedRoute>
+                  <ManageAccounts />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile/change-password" 
+              element={
+                <ProtectedRoute>
+                  <ChangePassword />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile/security" 
+              element={
+                <ProtectedRoute>
+                  <SecuritySettings />
                 </ProtectedRoute>
               } 
             />

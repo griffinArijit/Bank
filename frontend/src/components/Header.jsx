@@ -133,10 +133,7 @@ const Header = () => {
                   {activeDropdown === 'payments' && (
                     <div className="ml-4 space-y-1">
                       <div className="text-sm font-medium text-gray-600 uppercase tracking-wide">Fund Transfer</div>
-                      <Link to="/payments/own-account" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>To Own SBI Account</Link>
-                      <Link to="/payments/sbi-account" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>To Other SBI Account</Link>
-                      <Link to="/payments/other-bank" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>To Other Bank Account</Link>
-                      <Link to="/payments/quick-transfer" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Quick Transfer</Link>
+                      <Link to="/payments/transfer" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Money Transfer</Link>
                       <Link to="/payments/beneficiaries" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Manage Beneficiaries</Link>
                       
                       <div className="text-sm font-medium text-gray-600 uppercase tracking-wide mt-2">UPI</div>
