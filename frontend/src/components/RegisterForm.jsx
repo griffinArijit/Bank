@@ -17,7 +17,7 @@ const RegisterForm = () => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   
-  const { register } = useAuth()
+  const { registerInitiate, registerVerify } = useAuth()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -58,6 +58,9 @@ const RegisterForm = () => {
     return true
   }
 
+  const [otpPhase, setOtpPhase] = useState(false)
+  const [otp, setOtp] = useState('')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -68,17 +71,34 @@ const RegisterForm = () => {
     setSuccess('')
 
     const { confirmPassword, ...userData } = formData
-    const result = await register(userData)
-    
+    const result = await registerInitiate(userData)
+    if (result.success) {
+      setSuccess('OTP sent to your email. Please enter the 6-digit code.')
+      setOtpPhase(true)
+    } else {
+      setError(result.error)
+    }
+    setLoading(false)
+  }
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault()
+    if (!/^[0-9]{6}$/.test(otp)) {
+      setError('Enter a valid 6-digit OTP')
+      return
+    }
+    setLoading(true)
+    setError('')
+    setSuccess('')
+    const result = await registerVerify(formData.email, otp)
     if (result.success) {
       setSuccess('Account created successfully! Please login.')
       setTimeout(() => {
         navigate('/login')
-      }, 2000)
+      }, 1500)
     } else {
       setError(result.error)
     }
-    
     setLoading(false)
   }
 
@@ -100,6 +120,7 @@ const RegisterForm = () => {
           </p>
         </div>
         
+        {!otpPhase ? (
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
@@ -261,6 +282,61 @@ const RegisterForm = () => {
             </button>
           </div>
         </form>
+        ) : (
+        <form className="mt-8 space-y-6" onSubmit={handleVerifyOtp}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                Enter OTP sent to {formData.email}
+              </label>
+              <input
+                id="otp"
+                name="otp"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="input-field mt-1 tracking-widest text-center"
+                placeholder="______"
+                disabled={loading}
+                required
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+              {success}
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Verifying...' : 'Verify OTP'}
+            </button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={handleSubmit}
+              className="w-40 bg-gray-200 text-gray-800 py-2 px-4 rounded-md disabled:opacity-50"
+            >
+              Resend OTP
+            </button>
+          </div>
+        </form>
+        )}
       </div>
     </div>
   )

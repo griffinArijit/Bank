@@ -77,6 +77,31 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // OTP-based registration
+  const registerInitiate = async (userData) => {
+    try {
+      const response = await axios.post('/api/auth/register/initiate', userData)
+      return { success: true, data: response.data }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Failed to send OTP'
+      }
+    }
+  }
+
+  const registerVerify = async (email, otp) => {
+    try {
+      const response = await axios.post('/api/auth/register/verify', { email, otp })
+      return { success: true, data: response.data }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'OTP verification failed'
+      }
+    }
+  }
+
   const logout = () => {
     setUser(null)
     setToken(null)
@@ -89,6 +114,8 @@ export const AuthProvider = ({ children }) => {
     token,
     login,
     register,
+    registerInitiate,
+    registerVerify,
     logout,
     loading
   }

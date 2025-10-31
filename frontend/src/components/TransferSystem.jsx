@@ -8,13 +8,16 @@ const TransferSystem = () => {
   const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [otpPhase, setOtpPhase] = useState(false)
+  const [otp, setOtp] = useState('')
+  const [pendingTransferId, setPendingTransferId] = useState('')
   const [beneficiariesLoading, setBeneficiariesLoading] = useState(true)
 
   const [transferForm, setTransferForm] = useState({
     from_acc_number: '',
     beneficiary_id: '',
     amount: '',
-    transfer_mode: 'own'
+    transfer_mode: 'same_bank'
   })
 
   const [beneficiaryForm, setBeneficiaryForm] = useState({
@@ -30,7 +33,7 @@ const TransferSystem = () => {
     const fetchAccounts = async () => {
       try {
         const token = localStorage.getItem('token')
-        const res = await axios.get('http://localhost:5000/api/user/accounts', {
+        const res = await axios.get('/api/user/accounts', {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.status === 200) {
@@ -57,7 +60,7 @@ const TransferSystem = () => {
   const fetchBeneficiaries = async () => {
     try {
       const token = localStorage.getItem('token')
-      const res = await axios.get('http://localhost:5000/api/beneficiaries', {
+      const res = await axios.get('/api/beneficiaries', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.status === 200) {
@@ -87,42 +90,49 @@ const TransferSystem = () => {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:5000/api/transfer',
+        '/api/transfer/initiate',
         transferForm,
         { headers: { Authorization: `Bearer ${token}` } }
       )
 
       if (response.status === 200) {
-        let statusMessage = ''
-        switch (transferForm.transfer_mode) {
-          case 'own':
-            statusMessage = 'Transfer completed successfully! Money moved between your accounts.'
-            break
-          case 'same_bank':
-            statusMessage = 'Transfer completed successfully! Money transferred to same bank account.'
-            break
-          case 'other_bank_imps':
-            statusMessage = 'Transfer completed successfully! Money transferred instantly via IMPS.'
-            break
-          case 'other_bank_rtgs':
-            statusMessage = 'Transfer initiated successfully! Money will be transferred within 30 minutes via RTGS.'
-            break
-          default:
-            statusMessage = 'Transfer initiated successfully!'
-        }
-
-        setMessage(statusMessage)
-        setTransferForm(prev => ({
-          ...prev,
-          beneficiary_id: '',
-          amount: '',
-          transfer_mode: 'own'
-        }))
-        fetchBeneficiaries()
+        setPendingTransferId(response.data.pending_transfer_id)
+        setOtpPhase(true)
+        setMessage('OTP sent to your email. Please enter the 6-digit code to confirm.')
       }
     } catch (error) {
       console.error('Transfer error:', error)
       setMessage(error.response?.data?.error || 'Transfer failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerifyTransfer = async e => {
+    e.preventDefault()
+    if (!/^[0-9]{6}$/.test(otp)) {
+      setMessage('Enter a valid 6-digit OTP')
+      return
+    }
+    setLoading(true)
+    try {
+      const token = localStorage.getItem('token')
+      const res = await axios.post(
+        '/api/transfer/verify',
+        { pending_transfer_id: pendingTransferId, otp },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      if (res.status === 200) {
+        setMessage('Transfer completed successfully!')
+        setTransferForm(prev => ({ ...prev, beneficiary_id: '', amount: '', transfer_mode: 'same_bank' }))
+        setOtp('')
+        setOtpPhase(false)
+        setPendingTransferId('')
+        fetchBeneficiaries()
+      }
+    } catch (err) {
+      console.error('Verify transfer error:', err)
+      setMessage(err.response?.data?.error || 'OTP verification failed.')
     } finally {
       setLoading(false)
     }
@@ -136,7 +146,7 @@ const TransferSystem = () => {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:5000/api/beneficiaries',
+        '/api/beneficiaries',
         beneficiaryForm,
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -155,7 +165,6 @@ const TransferSystem = () => {
   }
 
   const transferModes = [
-    { value: 'own', label: 'Own Account Transfer' },
     { value: 'same_bank', label: 'Same Bank Transfer' },
     { value: 'other_bank_imps', label: 'Other Bank - IMPS (Instant)' },
     { value: 'other_bank_rtgs', label: 'Other Bank - RTGS (Delayed)' }
@@ -172,19 +181,6 @@ const TransferSystem = () => {
 
   // Cleaned selectable beneficiaries logic
   const getSelectableBeneficiaries = () => {
-    // Own transfer: exclude selected from account
-    if (transferForm.transfer_mode === 'own') {
-      return accounts
-        .filter(acc => acc.account_number !== transferForm.from_acc_number)
-        .map(acc => ({
-          _id: acc.account_number,
-          name: `${acc.account_type?.toUpperCase() || 'ACCOUNT'} (Self)`,
-          account_number: acc.account_number,
-          verified: true,
-          pending: false
-        }))
-    }
-
     // Remove duplicates by account number
     const uniqueBeneficiariesMap = {}
     beneficiaries.forEach(b => {
@@ -225,6 +221,7 @@ const TransferSystem = () => {
             {/* Transfer Form */}
             <div>
               <h2 className="text-xl font-semibold text-gray-700 mb-4">Transfer Money</h2>
+              {!otpPhase ? (
               <form onSubmit={handleTransfer} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">From Account</label>
@@ -305,6 +302,42 @@ const TransferSystem = () => {
                   {loading ? 'Processing...' : 'Transfer Money'}
                 </button>
               </form>
+              ) : (
+              <form onSubmit={handleVerifyTransfer} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Enter OTP</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]{6}"
+                    maxLength={6}
+                    value={otp}
+                    onChange={(e)=>setOtp(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 tracking-widest text-center"
+                    placeholder="______"
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  >
+                    {loading ? 'Verifying...' : 'Verify OTP'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleTransfer}
+                    disabled={loading}
+                    className="w-40 bg-gray-200 text-gray-800 py-2 px-4 rounded-md disabled:opacity-50"
+                  >
+                    Resend OTP
+                  </button>
+                </div>
+              </form>
+              )}
             </div>
 
             {/* Add Beneficiary Form */}
