@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import Header from './components/Header'
@@ -15,6 +15,9 @@ import ChangePassword from './components/ChangePassword'
 import SecuritySettings from './components/SecuritySettings'
 import TransferSystem from './components/TransferSystem'
 import TransactionHistory from './components/TransactionHistory'
+import AccountOverview from './components/AccountOverview'
+import AccountStatement from './components/AccountStatement'
+import AdvancedTransactionHistory from './components/AdvancedTransactionHistory'
 
 // Import all page components
 import Accounts from './pages/Accounts'
@@ -25,6 +28,22 @@ import Loans from './pages/Loans'
 import Cards from './pages/Cards'
 import Insurance from './pages/Insurance'
 import Services from './pages/Services'
+
+// Existing pages used below
+import FixedDeposit from './pages/FixedDeposit'
+import GoldPurchase from './pages/GoldPurchase'
+import MutualFunds from './pages/MutualFunds'
+import NomineeUpdate from './pages/NomineeUpdate'
+import ApplyPersonalLoan from './pages/ApplyPersonalLoan'
+import ApplyHomeLoan from './pages/ApplyHomeLoan'
+import ApplyEducationLoan from './pages/ApplyEducationLoan'
+import ApplyCarLoan from './pages/ApplyCarLoan'
+import ApplyLifeInsurance from './pages/ApplyLifeInsurance'
+import ApplyGeneralInsurance from './pages/ApplyGeneralInsurance'
+import CreditCardDetails from './pages/CreditCardDetails'
+import ApplyCard from './pages/ApplyCard'
+import BlockCard from './pages/BlockCard'
+import ChequeBookRequest from './pages/ChequeBookRequest'
 
 function App() {
   return (
@@ -84,6 +103,30 @@ function App() {
            </ProtectedRoute>
          } 
        />
+       <Route 
+         path="/payments/overview" 
+         element={
+           <ProtectedRoute>
+             <AccountOverview />
+           </ProtectedRoute>
+         } 
+       />
+       <Route 
+         path="/payments/statement" 
+         element={
+           <ProtectedRoute>
+             <AccountStatement />
+           </ProtectedRoute>
+         } 
+       />
+       <Route 
+         path="/payments/history/advanced" 
+         element={
+           <ProtectedRoute>
+             <AdvancedTransactionHistory />
+           </ProtectedRoute>
+         } 
+       />
             <Route 
               path="/payments/*" 
               element={
@@ -113,12 +156,60 @@ function App() {
               } 
             />
             
-            {/* Loan Routes */}
-            <Route 
+           {/* Loan Routes */}
+           <Route 
               path="/loans/*" 
               element={
                 <ProtectedRoute>
                   <Loans />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/loans/personal" 
+              element={
+                <ProtectedRoute>
+                  <ApplyPersonalLoan />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/loans/home" 
+              element={
+                <ProtectedRoute>
+                  <ApplyHomeLoan />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/loans/education" 
+              element={
+                <ProtectedRoute>
+                  <ApplyEducationLoan />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/loans/car" 
+              element={
+                <ProtectedRoute>
+                  <ApplyCarLoan />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/insurance/life" 
+              element={
+                <ProtectedRoute>
+                  <ApplyLifeInsurance />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/insurance/general" 
+              element={
+                <ProtectedRoute>
+                  <ApplyGeneralInsurance />
                 </ProtectedRoute>
               } 
             />
@@ -132,7 +223,49 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            
+            <Route 
+              path="/cards/details" 
+              element={
+                <ProtectedRoute>
+                  <CreditCardDetails />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/cards/apply" 
+              element={
+                <ProtectedRoute>
+                  <ApplyCard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/cards/block" 
+              element={
+                <ProtectedRoute>
+                  <BlockCard />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+  path="/fixed-deposit" 
+  element={
+    <ProtectedRoute>
+      <FixedDeposit />
+    </ProtectedRoute>
+  } 
+/>
+
+            <Route 
+  path="/investments/gold" 
+  element={
+    <ProtectedRoute>
+      <GoldPurchase />
+    </ProtectedRoute>
+  } 
+/>
+
             {/* Insurance Routes */}
             <Route 
               path="/insurance/*" 
@@ -152,7 +285,23 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            
+            {/* Service Routes */}
+            <Route 
+              path="/services/cheque-book" 
+              element={
+                <ProtectedRoute>
+                  <ChequeBookRequest />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/services/nominee-update" 
+              element={
+                <ProtectedRoute>
+                  <NomineeUpdate />
+                </ProtectedRoute>
+              } 
+            />
             {/* Profile Routes */}
             <Route 
               path="/profile/update" 
@@ -186,7 +335,11 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            
+            <Route path="/mutual-funds" element={
+              <Suspense fallback={<div className="p-6">Loading...</div>}>
+                <MutualFunds />
+              </Suspense>
+            } />
             {/* Catch-all route for any unmatched paths */}
             <Route 
               path="*" 

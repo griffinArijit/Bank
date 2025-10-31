@@ -112,9 +112,10 @@ const Header = () => {
                   </button>
                   {activeDropdown === 'accounts' && (
                     <div className="ml-4 space-y-1">
-                      <Link to="/accounts/overview" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Account Overview</Link>
-                      <Link to="/accounts/statements" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Account Statements</Link>
-                      <Link to="/accounts/transactions" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Transaction History</Link>
+                      <Link to="/payments/overview" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Account Overview</Link>
+                      <Link to="/payments/statement" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Account Statements</Link>
+                      <Link to="/payments/history" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Transaction History</Link>
+                      <Link to="/payments/history/advanced" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Advanced Transaction History</Link>
                     </div>
                   )}
                 </div>
@@ -133,31 +134,8 @@ const Header = () => {
                   {activeDropdown === 'payments' && (
                     <div className="ml-4 space-y-1">
                       <div className="text-sm font-medium text-gray-600 uppercase tracking-wide">Fund Transfer</div>
-                      <Link to="/payments/transfer" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Money Transfer</Link>
+                      <Link to="/payments/transfer" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Transfer Money</Link>
                       <Link to="/payments/beneficiaries" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Manage Beneficiaries</Link>
-                      
-                      <div className="text-sm font-medium text-gray-600 uppercase tracking-wide mt-2">UPI</div>
-                      <Link to="/payments/upi/send" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Send Money</Link>
-                      <Link to="/payments/upi/request" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Request Money</Link>
-                      <Link to="/payments/upi/scan" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Scan & Pay</Link>
-                      <Link to="/payments/upi/manage" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>UPI ID Management</Link>
-                      
-                      <div className="text-sm font-medium text-gray-600 uppercase tracking-wide mt-2">Bill Payments</div>
-                      <Link to="/payments/bills/mobile" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Mobile</Link>
-                      <Link to="/payments/bills/electricity" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Electricity</Link>
-                      <Link to="/payments/bills/water" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Water</Link>
-                      <Link to="/payments/bills/credit-card" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Credit Card</Link>
-                      <Link to="/payments/bills/dth" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>DTH</Link>
-                      <Link to="/payments/bills/others" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Others</Link>
-                      
-                      <div className="text-sm font-medium text-gray-600 uppercase tracking-wide mt-2">Recharge</div>
-                      <Link to="/payments/recharge/mobile" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>Mobile</Link>
-                      <Link to="/payments/recharge/dth" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>DTH</Link>
-                      <Link to="/payments/recharge/fastag" className="block text-gray-700 hover:text-primary-600 py-1 ml-2" onClick={closeNavbar}>FASTag</Link>
-                      
-                      <Link to="/payments/card-transfer" className="block text-gray-700 hover:text-primary-600 py-1 mt-2" onClick={closeNavbar}>Card to Card Transfer</Link>
-                      <Link to="/payments/scheduled" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Scheduled Transfers</Link>
-                      <Link to="/payments/history" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Transaction History</Link>
                     </div>
                   )}
                 </div>
@@ -186,8 +164,8 @@ const Header = () => {
                   </button>
                   {activeDropdown === 'investments' && (
                     <div className="ml-4 space-y-1">
-                      <Link to="/investments/mutual-funds" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Mutual Funds</Link>
-                      <Link to="/investments/fixed-deposits" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Fixed Deposits</Link>
+                      <Link to="/mutual-funds" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Mutual Funds</Link>
+                      <Link to="/fixed-deposit" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Fixed Deposits</Link>
                       <Link to="/investments/recurring-deposits" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Recurring Deposits</Link>
                       <Link to="/investments/gold" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Gold Purchase</Link>
                     </div>
@@ -249,7 +227,6 @@ const Header = () => {
                   {activeDropdown === 'insurance' && (
                     <div className="ml-4 space-y-1">
                       <Link to="/insurance/life" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Life Insurance</Link>
-                      <Link to="/insurance/health" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Health Insurance</Link>
                       <Link to="/insurance/general" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>General Insurance</Link>
                     </div>
                   )}
@@ -272,7 +249,7 @@ const Header = () => {
                       <Link to="/services/atm-card" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>ATM Card Services</Link>
                       <Link to="/services/block-atm" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Block ATM Card</Link>
                       <Link to="/services/card-limit" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Set Card Limit</Link>
-                      <Link to="/services/nominee" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Nominee Update</Link>
+                      <Link to="/services/nominee-update" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Nominee Update</Link>
                       <Link to="/services/track-requests" className="block text-gray-700 hover:text-primary-600 py-1" onClick={closeNavbar}>Track Requests</Link>
                     </div>
                   )}
